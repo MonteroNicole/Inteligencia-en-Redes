@@ -65,5 +65,51 @@ public class Discrete_ParticleUpdate {
     }
 
 
+class Particle {
+    int[] position;  // Asignación de contenedores a máquinas
+    int[] velocity;  // Velocidad de cambio de asignación
+    int[] bestPosition;  // Mejor solución local de la partícula
 
+    public Particle(int numContainers, int numMachines) {
+        position = new int[numContainers];
+        velocity = new int[numContainers];
+        bestPosition = new int[numContainers];
+
+        // Inicializar posición y velocidad aleatoriamente
+        for (int i = 0; i < numContainers; i++) {
+            position[i] = (int) (Math.random() * numMachines);
+            velocity[i] = 0;
+        }
+        System.arraycopy(position, 0, bestPosition, 0, numContainers);
+    }
+
+    public void update(int[] globalBestPosition, double c1, double c2, double w) {
+        // Actualizar la velocidad y posición de la partícula
+        for (int i = 0; i < position.length; i++) {
+            velocity[i] = (int) (w * velocity[i] 
+                        + c1 * Math.random() * (bestPosition[i] - position[i])
+                        + c2 * Math.random() * (globalBestPosition[i] - position[i]));
+
+            position[i] = Math.abs(position[i] + velocity[i]) % position.length;  // Asegura que esté en rango
+        }
+
+        // Actualizar la mejor posición si es necesario
+        if (evaluate(position) < evaluate(bestPosition)) {
+            System.arraycopy(position, 0, bestPosition, 0, position.length);
+        }
+    }
+
+    private int evaluate(int[] pos) {
+        // Evaluar la función objetivo: número de máquinas utilizadas o costo total
+        return calculateCost(pos);  // Suponiendo una función de costo
+    }
+
+    private int calculateCost(int[] pos) {
+        // Lógica para calcular el costo total o número de máquinas
+        return 0;  // Placeholder
+    }
+
+    public int[] getPosition() {
+        return position;
+    }
 }
